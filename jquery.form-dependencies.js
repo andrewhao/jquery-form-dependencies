@@ -7,6 +7,7 @@
         'INPUT' : {
             'checkbox' : 'change',
             'text' : 'keyup',
+            'radio' : 'change',
             undefined : 'keyup'
         },
         'SELECT' : {
@@ -38,6 +39,10 @@
 
             checkbox : function (element) {
                 return element.attr("checked");
+            },
+
+            radio : function (element) {
+                return element.is(":checked");
             }
         },
 
@@ -64,6 +69,12 @@
             $.each(options.elements, function (index, $dependencyElement) {
                 (function ($dependency, $dependent, dependencies, changeHandler) {
                     var eventType = eventTypes[$dependency.get(0).tagName][$dependency.attr('type')];
+
+                    // If a radio button, assign event handlers to all the appropriate
+                    // elements in the radio button group.
+                    if ( $dependency.is(":radio") )
+                        $dependency = $("[name=\"" + $dependency.attr('name') + "\"]")
+
                     $dependency.live(eventType, function () {
                         var enable = methods.elementsAreTruthy(dependencies);
 
